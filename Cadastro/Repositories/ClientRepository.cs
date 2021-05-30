@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Cadastro.Repositories
 {
+    /// <summary>
+    /// Classe que realiza todo o CRUD do sistema.
+    /// </summary>
     public class ClientRepository
     {
         private readonly IList<Client> Clients;

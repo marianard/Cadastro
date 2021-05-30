@@ -1,4 +1,5 @@
-﻿using Cadastro.Models;
+﻿using Cadastro.Helpers;
+using Cadastro.Models;
 using Cadastro.Repositories;
 using System;
 using System.Linq;
@@ -27,13 +28,13 @@ namespace Cadastro
         #region Events
         private void btnAddOrUpate_Click(object sender, EventArgs e)
         {
+
             var isValid = IsValid();
             if (!isValid)
                 return;
 
             char gender = rdMale.Checked ? 'M' : rdFemale.Checked ? 'F' : 'O';
 
-            //inserindo um novo cadastro
             var client = new Client();
             client.Id = int.Parse(string.IsNullOrEmpty(txtId.Text) ? "0" : txtId.Text);
             client.Name = txtName.Text;
@@ -48,7 +49,7 @@ namespace Cadastro
             {
                 repository.Add(client);
             }
-            //alterando para um novo valor
+          
             else
             {
                 repository.Update(client.Id, client);
@@ -156,7 +157,7 @@ namespace Cadastro
 
             if (txtName.TextLength >= 150)
             {
-                MessageBox.Show("Preencha o nome kakaka");
+                MessageBox.Show("O máximo de caracteres para o campo nome é 150.");
                 txtName.Focus();
                 return false;
             }
@@ -164,14 +165,14 @@ namespace Cadastro
             if (txtBirthDate.Value > DateTime.Today)
             {
                 MessageBox.Show("A data de nascimento deve ser menor que a data atual");
-                txtName.Focus();
+                txtBirthDate.Focus();
                 return false;
             }
 
             if (cbMaritalStatus.SelectedItem is null)
             {
                 MessageBox.Show("O campo Estado Civil é obrigatório");
-                txtName.Focus();
+                cbMaritalStatus.Focus();
                 return false;
             }
 
@@ -182,14 +183,21 @@ namespace Cadastro
                 return false;
             }
 
-            if (txtcpf.Text == "   .   .   -")
+            if (!CpfHelper.IsValid(txtcpf.Text))
             {
                 MessageBox.Show("O campo CPF é obrigatório");
                 txtcpf.Focus();
                 return false;
             }
 
-            if (txtId.Text is null && repository.GetByCpf(txtcpf.Text) is not null)
+            if (!TelephoneHelper.IsValid(txtTelephone.Text))
+            {
+                MessageBox.Show("O campo telefone é obrigatório");
+                txtTelephone.Focus();
+                return false;
+            }
+
+            if (String.IsNullOrEmpty(txtId.Text) && repository.GetByCpf(txtcpf.Text) is not null)
             {
                 MessageBox.Show("Cliente já cadastrado");
                 return false;
